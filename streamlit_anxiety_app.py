@@ -42,7 +42,7 @@ mental_health_data = mental_health_data.drop(['state'], axis=1)
 mental_health_data['Value'] = mental_health_data['Value'] / 100
 mental_health_data['Low CI'] = mental_health_data['Low CI'] / 100
 mental_health_data['High CI'] = mental_health_data['High CI'] / 100
-value_label = "Persistence"
+value_label = "Prevalence"
 
 with st.sidebar:
     time_select = st.selectbox("Time Period", time_period, index=len(time_period)-1)
@@ -70,6 +70,8 @@ st.markdown("The dataset comes from a bi-monthly survey called Indicators of "
             )
 st.markdown("This survey is used  to  identify symptoms of depression, symptoms of anxiety, or either.")
 
+st.markdown("A few news worthy events occured:")
+st.markdown("* ")
 st.subheader("Across the United States")
 mp = alt.Chart(states_mp).mark_geoshape(
    # fill='lightgray',
