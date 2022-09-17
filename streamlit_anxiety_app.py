@@ -25,7 +25,7 @@ def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
-st.info("Make sure to hover over!")
+st.info("The graphs are interactive, so make sure to play!")
 
 # Load data into page
 pop_id = load_pop_data()
