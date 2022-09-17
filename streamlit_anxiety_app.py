@@ -176,10 +176,10 @@ state_1_avg = state_1_data['Value'].mean()
 state_2_avg = state_2_data['Value'].mean()
 
 if state_1_avg <= state_2_avg:
-    st.markdown("{0} showed {1} in {2:.2%} of the "
+    st.markdown("Over the course of the survey, {0} showed {1} in {2:.2%} of the "
                 "population in contrast to {3} in {4:.2%} of the population with a difference of {5:.2%} between both states."
                 "".format(state_1, indicator_select.lower(), state_1_avg, state_2, state_2_avg, state_2_avg - state_1_avg))
-else: st.markdown("{0} showed {1} in {2:.2%} of the "
+else: st.markdown("Over the course of the survey, {0} showed {1} in {2:.2%} of the "
                 "population in contrast to {3} in {4:.2%} of the population with a difference of {5:.2%} between both states."
                 "".format(state_2, indicator_select.lower(), state_2_avg, state_1, state_1_avg, state_1_avg-state_2_avg))
 
