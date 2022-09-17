@@ -65,7 +65,8 @@ st.title('Comparing Symptoms of Anxiety and Depression in the US')
 
 expander = st.expander("Instructions")
 expander.write("""
-    Use the left sidebar drop-down menus to explore the dataset. If not visible, there is an right facing error in the top left corner of the window. 
+    Use the left sidebar drop-down menus to explore the dataset. If not visible, 
+    there is an right facing error in the top left corner of the window. 
     By default the visualizations have been set 
     to the most recent date and two states that have some interesting patterns.
 """)
@@ -84,7 +85,7 @@ st.markdown("* 02/03/2020 - US declares public health emergency\n"
             "* 01/06/2021 -  Assault on the White House\n"
             "* 01/24/2022 - Russia invades Ukraine\n"
             )
-st.markdown("Use the events as a way to understand some of the trends and the impact news events "
+st.markdown("Use the events as a way to understand trends and the impact news events "
             "can have on the minds of Americans.")
 
 st.subheader("Across the United States..")
