@@ -1,18 +1,16 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-from vega_datasets import data
-
 
 # Load data
 @st.cache()
 def load_state_data():
-    return alt.topo_feature(data.us_10m.url, 'states')
+    return alt.topo_feature('https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/us-10m.json', 'states')
 
 
 @st.cache()
 def load_pop_data():
-    pop = data.population_engineers_hurricanes()  # simply to get the ids in order to merge the data
+    pop = pd.read_csv('state_data.csv') # simply to get the ids in order to merge the data
     return pop[['state', 'id']]
 
 
