@@ -36,11 +36,13 @@ states = mental_health_data['State'].unique()
 time_period = mental_health_data['Time Period Label'].unique()
 indicator =  mental_health_data['Indicator'].unique()
 
+# Data Manipulation
 mental_health_data = mental_health_data.merge(pop_id, left_on='State', right_on='state')
 mental_health_data = mental_health_data.drop(['state'], axis=1)
 mental_health_data['Value'] = mental_health_data['Value'] / 100
 mental_health_data['Low CI'] = mental_health_data['Low CI'] / 100
 mental_health_data['High CI'] = mental_health_data['High CI'] / 100
+value_label = "Persistence"
 
 with st.sidebar:
     time_select = st.selectbox("Time Period", time_period, index=len(time_period)-1)
@@ -60,13 +62,13 @@ dataset = mental_health_data[(mental_health_data['Group'] == "By State") &
 
 st.title('NCHS Pulse Survey on Mental Health')
 
-st.markdown("The dataset I've ended up going with was Indicators of "
-            "Anxiety and Depression based on the Household Pulse Survey "
-            "designed to gauge the impact of the pandemic on employment "
-            "status, consumer spend from [CDC](https://data.cdc.gov/NCHS/Indicators-of-"
-            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) or [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp). This survey information tries to quickly identify symptoms of depression, symptoms of anxiety, or either or which I assume might be due to the difficulty of identifying  the difference between the symptoms.  The data is an estimation on a regular basis."
+st.markdown("The dataset comes from a bi-monthly survey called Indicators of "
+            "Anxiety and Depression based on the Household Pulse Survey. "
+            "It was designed to gauge the impact of the pandemic on employment "
+            "status, consumer spend in conjunction with the [CDC](https://data.cdc.gov/NCHS/Indicators-of-"
+            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) and [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp). "
             )
-value_label = "Persistence"
+st.markdown("This survey is used  to  identify symptoms of depression, symptoms of anxiety, or either.")
 
 st.subheader("Across the United States")
 mp = alt.Chart(states_mp).mark_geoshape(
@@ -139,4 +141,4 @@ with tab2:
     )
 
 st.markdown("### Definitions")
-st.markdown("* Persistence - % of State Population the exhibit selected symptom(s)")
+st.markdown("* Persistence - % of State Population that exhibit selected symptom(s)")
