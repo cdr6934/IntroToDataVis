@@ -46,7 +46,7 @@ value_label = "Prevalence"
 
 with st.sidebar:
     time_select = st.selectbox("Time Period", time_period, index=len(time_period)-1)
-    indicator_select = st.selectbox("Indicator", indicator)
+    indicator_select = st.selectbox("People with", indicator)
     state_1 = st.selectbox("Current State", states, index=42)
     state_2 = st.selectbox("Compare State", states, index=15)
 
@@ -60,19 +60,33 @@ dataset = mental_health_data[(mental_health_data['Group'] == "By State") &
 
 
 
-st.title('NCHS Pulse Survey on Mental Health')
+st.title('Comparing Symptoms of Anxiety and Depression in the US')
+
+expander = st.expander("Instructions")
+expander.write("""
+    Use the left sidebar drop-down menus to explore the dataset. If not visible, there is an right facing error in the top left corner of the window. 
+    By default the visualizations have been set 
+    to the most recent date and two states that have some interesting patterns.
+""")
 
 st.markdown("The dataset comes from a bi-monthly survey called Indicators of "
             "Anxiety and Depression based on the Household Pulse Survey. "
-            "It was designed to gauge the impact of the pandemic on employment "
-            "status, consumer spend in conjunction with the [CDC](https://data.cdc.gov/NCHS/Indicators-of-"
-            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) and [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp). "
+            "It was designed to gauge the impact of the pandemic and conducted "
+            " in conjunction with the [CDC](https://data.cdc.gov/NCHS/Indicators-of-"
+            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) and [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp).")
+st.markdown("This survey is used  to  identify symptoms of depression, symptoms of anxiety, or either. The past couple years "
+            "have caused many unknowns ")
+st.markdown("A few newsworthy events occured:")
+st.markdown("* 02/03/2020 - US declares public health emergency\n"
+            "* 05/25/2020 - Murder of George Floyd\n"
+            "* 11/03/2020 - US Presidential Elections\n"
+            "* 01/06/2021 -  Assault on the White House\n"
+            "* 01/24/2022 - Russia invades Ukraine\n"
             )
-st.markdown("This survey is used  to  identify symptoms of depression, symptoms of anxiety, or either.")
+st.markdown("Use the events as a way to understand some of the trends and the impact news events "
+            "can have on the minds of Americans.")
 
-st.markdown("A few news worthy events occured:")
-st.markdown("* ")
-st.subheader("Across the United States")
+st.subheader("Across the United States..")
 mp = alt.Chart(states_mp).mark_geoshape(
    # fill='lightgray',
    # stroke='white'
@@ -92,13 +106,8 @@ mp = alt.Chart(states_mp).mark_geoshape(
     type='albersUsa'
 ).interactive()
 
-
-
 st.altair_chart(mp)
 
-# Following information
-tab1, tab2 = st.tabs(["Chart", "Data"])
-interest_col = indicator_select
 
 # Data Aggregation
 select_state1_data = mental_health_data[
@@ -106,6 +115,20 @@ select_state1_data = mental_health_data[
             mental_health_data.Indicator == indicator_select)]
 select_state1_data = select_state1_data[["State", 'Time Period Label', "Time Period Start Date", "Value", "Low CI", "High CI"]]
 
+min_value = min(dataset['Value'])
+max_value = max(dataset['Value'])
+max_row = dataset[dataset['Value'] == max_value]
+data_start = "During **{0}** we see the survey estimates people with {1} range from {2:.2%} to {3:.2%}" \
+             " or a difference of {4:.2%}".format(time_select,indicator_select.lower(), min_value, max_value, max_value-min_value)
+
+st.markdown(data_start)
+st.markdown("This information gives us a point in time understanding of these symptoms. "
+            "You will find some variability between time periods, but what about two specific states? ")
+
+# Following information
+st.subheader("How does {0} and {1} compare?".format(state_1,state_2))
+tab1, tab2 = st.tabs(["Chart", "Data"])
+interest_col = indicator_select
 with tab1:
 
     c = alt.Chart(select_state1_data).mark_line().encode(
@@ -129,6 +152,7 @@ with tab1:
               ).mark_rule().encode(x='Time Period Start Date:T')
 
     st.altair_chart(c)
+    st.caption("The transparent areas around the line are confidence intervals (CI)")
 with tab2:
     st.subheader(interest_col)
     st.dataframe(data=select_state1_data)
@@ -143,4 +167,4 @@ with tab2:
     )
 
 st.markdown("### Definitions")
-st.markdown("* Persistence - % of State Population that exhibit selected symptom(s)")
+st.markdown("* Prevalence - % of State Population that exhibit selected symptom(s)")
