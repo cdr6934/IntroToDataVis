@@ -38,7 +38,9 @@ indicator =  mental_health_data['Indicator'].unique()
 
 mental_health_data = mental_health_data.merge(pop_id, left_on='State', right_on='state')
 mental_health_data = mental_health_data.drop(['state'], axis=1)
-
+mental_health_data['Value'] = mental_health_data['Value'] / 100
+mental_health_data['Low CI'] = mental_health_data['Low CI'] / 100
+mental_health_data['High CI'] = mental_health_data['High CI'] / 100
 
 with st.sidebar:
     time_select = st.selectbox("Time Period", time_period, index=len(time_period)-1)
@@ -56,34 +58,37 @@ dataset = mental_health_data[(mental_health_data['Group'] == "By State") &
 
 
 
-st.title('Anxiety / Depression Analysis by Week')
+st.title('NCHS Pulse Survey on Mental Health')
 
 st.markdown("The dataset I've ended up going with was Indicators of "
             "Anxiety and Depression based on the Household Pulse Survey "
             "designed to gauge the impact of the pandemic on employment "
             "status, consumer spend from [CDC](https://data.cdc.gov/NCHS/Indicators-of-"
-            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) or [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp). This survey information tries to quickly identify symptoms of depression, symptoms of anxiety, or either or which I assume might be due to the difficulty of identifying  the difference between the symptoms.  The data is an estimation on a regular basis.")
+            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) or [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp). This survey information tries to quickly identify symptoms of depression, symptoms of anxiety, or either or which I assume might be due to the difficulty of identifying  the difference between the symptoms.  The data is an estimation on a regular basis."
+            )
+value_label = "Persistence"
 
-
-st.subheader(time_select)
-
-#st.dataframe(dataset)
-
+st.subheader("Across the United States")
 mp = alt.Chart(states_mp).mark_geoshape(
    # fill='lightgray',
    # stroke='white'
 ).encode(
-    tooltip=['State:N','Value:Q'],
-    color='Value:Q',
+    alt.Color('Value:Q', title=value_label, legend=alt.Legend(format='.1%')),
+    tooltip=['State:N',
+             alt.Tooltip('Value:Q', format='.1%', title=value_label)]
+
 ).transform_lookup(
     lookup='id',
     from_=alt.LookupData(dataset, 'id', ['Value','State'])
 ).properties(
     width=800,
-    height=400
+    height=400,
+    title= "{0} ({1})".format(indicator_select, time_select)
 ).project(
     type='albersUsa'
 ).interactive()
+
+
 
 st.altair_chart(mp)
 
@@ -95,13 +100,13 @@ interest_col = indicator_select
 select_state1_data = mental_health_data[
     ((mental_health_data.State == state_1) | (mental_health_data.State == state_2)) & (
             mental_health_data.Indicator == indicator_select)]
-select_state1_data = select_state1_data[["State", "Time Period Start Date", "Value", "Low CI", "High CI"]]
+select_state1_data = select_state1_data[["State", 'Time Period Label', "Time Period Start Date", "Value", "Low CI", "High CI"]]
 
 with tab1:
-    st.subheader(interest_col)
+
     c = alt.Chart(select_state1_data).mark_line().encode(
         alt.X('Time Period Start Date:T', title=''),
-        alt.Y('Value', title="% of Population"),
+        alt.Y('Value', title="% of Population",  axis=alt.Axis(format='%')),
         color='State'
     ) + alt.Chart(select_state1_data).mark_area(
         opacity=0.5
@@ -110,11 +115,15 @@ with tab1:
         y='Low CI',
         y2='High CI',
         color='State',
-        tooltip=['Time Period Start Date:T', "Value:Q"]
+        tooltip=[alt.Tooltip('Time Period Label:N',title="Time Period"),
+                 alt.Tooltip("Value:Q", format='.1%', title=value_label)]
     ).properties(
     width=800,
-    height=400
-)
+    height=400,
+    title="{0} in {1} compared to {2}".format(interest_col, state_1, state_2)
+) + alt.Chart(select_state1_data[select_state1_data['Time Period Label'] == time_select]
+              ).mark_rule().encode(x='Time Period Start Date:T')
+
     st.altair_chart(c)
 with tab2:
     st.subheader(interest_col)
@@ -128,3 +137,6 @@ with tab2:
         file_name='large_df.csv',
         mime='text/csv',
     )
+
+st.markdown("### Definitions")
+st.markdown("* Persistence - % of State Population the exhibit selected symptom(s)")
