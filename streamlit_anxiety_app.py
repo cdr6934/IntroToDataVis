@@ -25,6 +25,7 @@ def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
+st.info("Make sure to hover over!")
 
 # Load data into page
 pop_id = load_pop_data()
@@ -122,8 +123,8 @@ data_start = "During **{0}** we see the survey estimates people with {1} range f
              " or a difference of {4:.2%}".format(time_select,indicator_select.lower(), min_value, max_value, max_value-min_value)
 
 st.markdown(data_start)
-st.markdown("This information gives us a point in time understanding of these symptoms. "
-            "You will find some variability between time periods, but what about two specific states? ")
+st.markdown("Above we are  given a point in time understanding of these symptoms throughout the US. "
+            "However, you will find some variability between time periods, so what about two specific states? ")
 
 # Following information
 st.subheader("How does {0} and {1} compare?".format(state_1,state_2))
