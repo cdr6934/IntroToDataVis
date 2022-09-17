@@ -66,7 +66,7 @@ st.title('Comparing Symptoms of Anxiety and Depression in the US')
 expander = st.expander("Instructions")
 expander.write("""
     Use the left sidebar drop-down menus to explore the dataset. If not visible, 
-    there is an right facing error in the top left corner of the window. 
+    there is an right facing arrow in the top left corner of the window. 
     By default the visualizations have been set 
     to the most recent date and two states that have some interesting patterns.
 """)
@@ -75,20 +75,22 @@ st.markdown("The dataset comes from a bi-monthly survey called Indicators of "
             "Anxiety and Depression based on the Household Pulse Survey. "
             "It was designed to gauge the impact of the pandemic and conducted "
             " in conjunction with the [CDC](https://data.cdc.gov/NCHS/Indicators-of-"
-            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) and [NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp).")
-st.markdown("This survey is used  to  identify symptoms of depression, symptoms of anxiety, or either. The past couple years "
-            "have caused many unknowns ")
+            "Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp) and "
+            "[NCHS](https://data.cdc.gov/NCHS/Indicators-of-Anxiety-or-Depression-Based-on-Repor/8pt5-q6wp).")
+st.markdown("This survey is used  to  identify depression and anxiety, or either. The past couple years "
+            "have caused many unknowns.")
+
 st.markdown("A few newsworthy events occured:")
-st.markdown("* 02/03/2020 - US declares public health emergency\n"
-            "* 05/25/2020 - Murder of George Floyd\n"
+st.markdown("* 02/03/2020 - US declared public health emergency\n"
+            "* 05/25/2020 - George Floyd Murdered\n"
             "* 11/03/2020 - US Presidential Elections\n"
             "* 01/06/2021 -  Assault on the White House\n"
-            "* 01/24/2022 - Russia invades Ukraine\n"
+            "* 01/24/2022 - Russia invaded Ukraine\n"
             )
 st.markdown("Use the events as a way to understand trends and the impact news events "
             "can have on the minds of Americans.")
 
-st.subheader("Across the United States..")
+st.subheader("Across the United States...")
 mp = alt.Chart(states_mp).mark_geoshape(
    # fill='lightgray',
    # stroke='white'
@@ -167,6 +169,19 @@ with tab2:
         file_name='large_df.csv',
         mime='text/csv',
     )
+
+state_1_data = select_state1_data[select_state1_data['State'] == state_1]
+state_2_data = select_state1_data[select_state1_data['State'] == state_2]
+state_1_avg = state_1_data['Value'].mean()
+state_2_avg = state_2_data['Value'].mean()
+
+if state_1_avg <= state_2_avg:
+    st.markdown("{0} showed {1} in {2:.2%} of the "
+                "population in contrast to {3} in {4:.2%} of the population with a difference of {5:.2%} between both states."
+                "".format(state_1, indicator_select.lower(), state_1_avg, state_2, state_2_avg, state_2_avg - state_1_avg))
+else: st.markdown("{0} showed {1} in {2:.2%} of the "
+                "population in contrast to {3} in {4:.2%} of the population with a difference of {5:.2%} between both states."
+                "".format(state_2, indicator_select.lower(), state_2_avg, state_1, state_1_avg, state_1_avg-state_2_avg))
 
 st.markdown("### Definitions")
 st.markdown("* Prevalence - % of State Population that exhibit selected symptom(s)")
